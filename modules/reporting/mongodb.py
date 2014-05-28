@@ -235,6 +235,10 @@ class MongoDB(Report):
                 report["suri_file_cnt"] = len(results["suricata"]["files"])
             if results["suricata"].has_key("http") and len(results["suricata"]["http"]) > 0:
                 report["suri_http_cnt"] = len(results["suricata"]["http"])
+        if results.has_key("behavior") and results["behavior"].has_key("martianlist") and results["behavior"]["martianlist"] and len(results["behavior"]["martianlist"]) > 0:
+            print  len(results["behavior"]["martianlist"])
+            report["mlist_cnt"] = len(results["behavior"]["martianlist"])
+
         # Store the report and retrieve its object id.
         self.db.analysis.save(report)
         self.conn.disconnect()
