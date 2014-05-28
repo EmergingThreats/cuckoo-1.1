@@ -27,6 +27,7 @@
                     <th>SuriTLS</th>
                     <th>SuriFiles</th>
                     <th>Moloch</th>
+                    <th>Martians</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -110,6 +111,13 @@
                                   <span class="mono">None</span>
                             {% endif %}
                         </td>
+                        <td>
+                            {% if analysis.mlist_cnt %}
+                                <span class="mono">Martian_Process:{{analysis.mlist_cnt}}</span>
+                            {% else %}
+                                  <span class="mono">None</span>
+                            {% endif %}
+                        </td>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -137,6 +145,7 @@
                     <th>SuriTLS</th>
                     <th>SuriFiles</th>
                     <th>Moloch</th>
+                    <th>Martian Processes</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -202,6 +211,13 @@
                         <td>
                             {% if analysis.moloch_url %}
                                 <a href={{analysis.moloch_url}} target="_blank"><span class="mono">MOLOCH</span></a>
+                            {% else %}
+                                  <span class="mono">None</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if analysis.mlist_cnt %}
+                                <span class="mono">Martian_Process:{{analysis.mlist_cnt}}</span>
                             {% else %}
                                   <span class="mono">None</span>
                             {% endif %}

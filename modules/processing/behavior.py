@@ -5,6 +5,7 @@
 import os
 import logging
 import datetime
+import json
 
 from lib.cuckoo.common.abstracts import Processing
 from lib.cuckoo.common.config import Config
@@ -908,6 +909,25 @@ class BehaviorAnalysis(Processing):
 
     key = "behavior"
 
+    def go_deeper(self, pdict, result=None):
+        if result is None:
+            result = []
+        result.append(pdict["name"])
+        for e in pdict["children"]:
+            self.go_deeper(e, result)
+        return result
+
+    def find_martians(self,ptree,pwlist):
+       result = []
+       for entry in pwlist:
+           if ptree[0]["name"] == entry.encode('utf-8'):
+               if ptree[0]["children"]:
+                   children = self.go_deeper(ptree[0])
+                   for child in children:
+                       if child not in pwlist[entry]:
+                           result.append(child)
+       return result
+
     def run(self):
         """Run analysis.
         @return: results dict.
@@ -940,4 +960,11 @@ class BehaviorAnalysis(Processing):
             for process in behavior["processes"]:
                 process["calls"].reset()
 
+            try:
+                self.process_white_list = json.loads(self.options.get("process_white_list","{}"))
+                for e in self.process_white_list:
+                    self.process_white_list[e] = [s.encode('utf-8') for s in self.process_white_list[e]]
+                behavior["martianlist"] = self.find_martians(behavior["processtree"],self.process_white_list)
+            except Exception as e:
+                log.exception("Failed to get martian list \"%s\"", e)
         return behavior
