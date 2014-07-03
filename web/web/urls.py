@@ -9,5 +9,6 @@ urlpatterns = patterns("",
     url(r"^analysis/", include("analysis.urls")),
     url(r"^submit/", include("submission.urls")),
     url(r"^file/(?P<category>\w+)/(?P<object_id>\w+)/$", "analysis.views.file"),
+    url(r"^viewfile/(?P<category>\w+)/(?P<object_id>\w+)/$", "analysis.views.viewfile"),
     url(r"^dashboard/", include("dashboard.urls")),
 )

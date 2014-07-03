@@ -61,6 +61,10 @@ class Suricata(Processing):
         suricata["files"]=[]
         suricata["http"]=[]      
         suricata["file_info"]=[]
+        suricata["fast_full_path"] = None
+        suricata["tls_full_path"] = None
+        suricata["http_log_full_path"] = None
+        suricata["file_log_full_path"] = None
 
         SURICATA_FAST_FULL_PATH = "%s/%s" % (self.logs_path,SURICATA_FAST)
         SURICATA_TLS_FULL_PATH = "%s/%s" % (self.logs_path,SURICATA_TLS)
@@ -133,12 +137,14 @@ class Suricata(Processing):
 
         if os.path.exists(SURICATA_FAST_FULL_PATH):
            f = open(SURICATA_FAST_FULL_PATH).readlines()
+           suricata["fast_full_path"] = SURICATA_FAST_FULL_PATH
            for l in f:
                suricata["alerts"].append(l)
         else:
             log.warning("Suricata: Failed to find alert log at %s" % (SURICATA_FAST_FULL_PATH))
 
         if os.path.exists(SURICATA_TLS_FULL_PATH):
+            suricata["tls_full_path"] = SURICATA_TLS_FULL_PATH
             f = open(SURICATA_TLS_FULL_PATH).readlines()
             for l in f:
                 suricata["tls"].append(l)
@@ -146,6 +152,7 @@ class Suricata(Processing):
             log.warning("Suricata: Failed to find TLS log at %s" % (SURICATA_TLS_FULL_PATH))
 
         if os.path.exists(SURICATA_HTTP_LOG_FULL_PATH):
+            suricata["http_log_full_path"] = SURICATA_HTTP_LOG_FULL_PATH
             f = open(SURICATA_HTTP_LOG_FULL_PATH).readlines()
             for l in f:
                 suricata["http"].append(l)
@@ -153,6 +160,7 @@ class Suricata(Processing):
             log.warning("Suricata: Failed to find http log at %s" % (SURICATA_HTTP_LOG_FULL_PATH))
 
         if os.path.exists(SURICATA_FILE_LOG_FULL_PATH):
+            suricata["file_log_full_path"] = SURICATA_FILE_LOG_FULL_PATH
             f = open(SURICATA_FILE_LOG_FULL_PATH).readlines()
             for l in f:
                 try:

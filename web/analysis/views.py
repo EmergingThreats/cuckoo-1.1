@@ -4,7 +4,7 @@
 
 import sys
 import re
-
+from pprint import pprint
 from django.conf import settings
 from django.template import RequestContext
 from django.http import HttpResponse
@@ -39,10 +39,10 @@ def index(request):
             if db.view_errors(task.id):
                 new["errors"] = True
 
-            rtmp = results_db.analysis.find_one({"info.id": int(new["id"])},{"virustotal_summary": 1, "suri_tls_cnt": 1, "suri_alert_cnt": 1, "suri_http_cnt": 1, "suri_file_cnt": 1, "mlist_cnt": 1},sort=[("_id", pymongo.DESCENDING)])
+            rtmp = results_db.analysis.find_one({"info.id": int(new["id"])},{"virustotal_summary": 1, "suri_tls_cnt": 1, "suri_alert_cnt": 1, "suri_http_cnt": 1, "suri_file_cnt": 1, "suricata.http_log_id": 1, "suricata.tls_log_id": 1, "suricata.fast_log_id": 1, "suricata.file_log_id": 1, "mlist_cnt": 1, "network.pcap_id":1},sort=[("_id", pymongo.DESCENDING)])
             if rtmp:
                 if rtmp.has_key("virustotal_summary") and rtmp["virustotal_summary"]:
-                    new["virustotal_summary"] = rtmp["virustotal_summary"] 
+                    new["virustotal_summary"] = rtmp["virustotal_summary"]
                 if rtmp.has_key("suri_tls_cnt") and rtmp["suri_tls_cnt"]:
                     new["suri_tls_cnt"] = rtmp["suri_tls_cnt"]
                 if rtmp.has_key("suri_alert_cnt") and rtmp["suri_alert_cnt"]:
@@ -51,8 +51,18 @@ def index(request):
                     new["suri_file_cnt"] = rtmp["suri_file_cnt"]
                 if rtmp.has_key("suri_http_cnt") and rtmp["suri_http_cnt"]:
                     new["suri_http_cnt"] = rtmp["suri_http_cnt"]
+                if rtmp.has_key("suricata") and rtmp["suricata"].has_key("http_log_id") and rtmp["suricata"]["http_log_id"]:
+                    new["suricata_http_log_id"] = rtmp["suricata"]["http_log_id"]
+                if rtmp.has_key("suricata") and rtmp["suricata"].has_key("tls_log_id") and rtmp["suricata"]["tls_log_id"]:
+                    new["suricata_tls_log_id"] = rtmp["suricata"]["tls_log_id"]
+                if rtmp.has_key("suricata") and rtmp["suricata"].has_key("fast_log_id") and rtmp["suricata"]["fast_log_id"]:
+                    new["suricata_fast_log_id"] = rtmp["suricata"]["fast_log_id"]
+                if rtmp.has_key("suricata") and rtmp["suricata"].has_key("file_log_id") and rtmp["suricata"]["file_log_id"]:
+                    new["suricata_file_log_id"] = rtmp["suricata"]["file_log_id"]
                 if rtmp.has_key("mlist_cnt") and rtmp["mlist_cnt"]:
                     new["mlist_cnt"] = rtmp["mlist_cnt"]
+                if rtmp.has_key("network") and rtmp["network"].has_key("pcap_id") and rtmp["network"]["pcap_id"]:
+                    new["pcap_id"] = rtmp["network"]["pcap_id"]
             if settings.MOLOCH_ENABLED:
                 if settings.MOLOCH_BASE[-1] != "/":
                     settings.MOLOCH_BASE = settings.MOLOCH_BASE + "/"
@@ -65,7 +75,7 @@ def index(request):
 
             if db.view_errors(task.id):
                 new["errors"] = True
-            rtmp = results_db.analysis.find_one({"info.id": int(new["id"])},{"virustotal_summary": 1, "suri_tls_cnt": 1, "suri_alert_cnt": 1, "suri_http_cnt": 1, "suri_file_cnt": 1, "mlist_cnt": 1},sort=[("_id", pymongo.DESCENDING)])
+            rtmp = results_db.analysis.find_one({"info.id": int(new["id"])},{"virustotal_summary": 1, "suri_tls_cnt": 1, "suri_alert_cnt": 1, "suri_http_cnt": 1, "suri_file_cnt": 1, "suricata.http_log_id": 1, "suricata.tls_log_id": 1, "suricata.fast_log_id": 1, "suricata.file_log_id": 1, "mlist_cnt": 1, "network.pcap_id":1},sort=[("_id", pymongo.DESCENDING)])
             if rtmp:
                 if rtmp.has_key("virustotal_summary") and rtmp["virustotal_summary"]:
                     new["virustotal_summary"] = rtmp["virustotal_summary"]
@@ -77,13 +87,22 @@ def index(request):
                     new["suri_file_cnt"] = rtmp["suri_file_cnt"]
                 if rtmp.has_key("suri_http_cnt") and rtmp["suri_http_cnt"]:
                     new["suri_http_cnt"] = rtmp["suri_http_cnt"]
+                if rtmp.has_key("suricata") and rtmp["suricata"].has_key("http_log_id") and rtmp["suricata"]["http_log_id"]:
+                    new["suricata_http_log_id"] = rtmp["suricata"]["http_log_id"]
+                if rtmp.has_key("suricata") and rtmp["suricata"].has_key("tls_log_id") and rtmp["suricata"]["tls_log_id"]:
+                    new["suricata_tls_log_id"] = rtmp["suricata"]["tls_log_id"]
+                if rtmp.has_key("suricata") and rtmp["suricata"].has_key("fast_log_id") and rtmp["suricata"]["fast_log_id"]:
+                    new["suricata_fast_log_id"] = rtmp["suricata"]["fast_log_id"]
+                if rtmp.has_key("suricata") and rtmp["suricata"].has_key("file_log_id") and rtmp["suricata"]["file_log_id"]:
+                    new["suricata_file_log_id"] = rtmp["suricata"]["file_log_id"]
                 if rtmp.has_key("mlist_cnt") and rtmp["mlist_cnt"]:
                     new["mlist_cnt"] = rtmp["mlist_cnt"]
+                if rtmp.has_key("network") and rtmp["network"].has_key("pcap_id") and rtmp["network"]["pcap_id"]:
+                    new["pcap_id"] = rtmp["network"]["pcap_id"]
             if settings.MOLOCH_ENABLED:
                 if settings.MOLOCH_BASE[-1] != "/":
                     settings.MOLOCH_BASE = settings.MOLOCH_BASE + "/"
                 new["moloch_url"] = settings.MOLOCH_BASE + "?date=-1&expression=tags" + quote("\x3d\x3d\x22%s\x3a%s\x22" % (settings.MOLOCH_NODE,new["id"]),safe='')
-
             analyses_urls.append(new)
 
     return render_to_response("analysis/index.html",
@@ -208,16 +227,41 @@ def file(request, category, object_id):
         file_name = file_item.sha256
         if category == "pcap":
             file_name += ".pcap"
+            content_type = file_object.get("contentType", "application/vnd.tcpdump.pcap")
         elif category == "zip":
             file_name += ".zip"
         elif category == "screenshot":
             file_name += ".jpg"
+        elif category == "text":
+            file_name += ".txt"
+            content_type = file_object.get("contentType", "text/plain")
         else:
             file_name += ".bin"
 
         response = HttpResponse(file_item.read(), content_type=content_type)
         response["Content-Disposition"] = "attachment; filename={0}".format(file_name)
 
+        return response
+    else:
+        return render_to_response("error.html",
+                                  {"error": "File not found"},
+                                  context_instance=RequestContext(request))
+
+@require_safe
+def viewfile(request, category, object_id):
+    file_object = results_db.fs.files.find_one({"_id": ObjectId(object_id)})
+
+    if file_object:
+        content_type = file_object.get("contentType", "text/plain") 
+        file_item = fs.get(ObjectId(file_object["_id"]))
+
+        file_name = file_item.sha256
+        if category == "text":
+            file_name += ".txt"
+        else:
+            file_name += ".bin"
+
+        response = HttpResponse(file_item.read(), content_type=content_type)
         return response
     else:
         return render_to_response("error.html",
@@ -316,8 +360,13 @@ def search(request):
                 continue
 
             new = new.to_dict()
+            if result["info"]["category"] == "file":
+                if new["sample_id"]:
+                    sample = db.view_sample(new["sample_id"])
+                    if sample:
+                        new["sample"] = sample.to_dict()
 
-            rtmp = results_db.analysis.find_one({"info.id": int(new["id"])},{"virustotal_summary": 1, "suri_tls_cnt": 1, "suri_alert_cnt": 1, "suri_http_cnt": 1, "suri_file_cnt": 1, "mlist_cnt": 1},sort=[("_id", pymongo.DESCENDING)])
+            rtmp = results_db.analysis.find_one({"info.id": int(new["id"])},{"virustotal_summary": 1, "suri_tls_cnt": 1, "suri_alert_cnt": 1, "suri_http_cnt": 1, "suri_file_cnt": 1, "suricata.http_log_id": 1, "suricata.tls_log_id": 1, "suricata.fast_log_id": 1, "suricata.file_log_id": 1, "mlist_cnt": 1, "network.pcap_id":1},sort=[("_id", pymongo.DESCENDING)])
             if rtmp:
                 if rtmp.has_key("virustotal_summary") and rtmp["virustotal_summary"]:
                     new["virustotal_summary"] = rtmp["virustotal_summary"]
@@ -329,8 +378,18 @@ def search(request):
                     new["suri_file_cnt"] = rtmp["suri_file_cnt"]
                 if rtmp.has_key("suri_http_cnt") and rtmp["suri_http_cnt"]:
                     new["suri_http_cnt"] = rtmp["suri_http_cnt"]
+                if rtmp.has_key("suricata") and rtmp["suricata"].has_key("http_log_id") and rtmp["suricata"]["http_log_id"]:
+                    new["suricata_http_log_id"] = rtmp["suricata"]["http_log_id"]
+                if rtmp.has_key("suricata") and rtmp["suricata"].has_key("tls_log_id") and rtmp["suricata"]["tls_log_id"]:
+                    new["suricata_tls_log_id"] = rtmp["suricata"]["tls_log_id"]
+                if rtmp.has_key("suricata") and rtmp["suricata"].has_key("fast_log_id") and rtmp["suricata"]["fast_log_id"]:
+                    new["suricata_fast_log_id"] = rtmp["suricata"]["fast_log_id"]
+                if rtmp.has_key("suricata") and rtmp["suricata"].has_key("file_log_id") and rtmp["suricata"]["file_log_id"]:
+                    new["suricata_file_log_id"] = rtmp["suricata"]["file_log_id"]
                 if rtmp.has_key("mlist_cnt") and rtmp["mlist_cnt"]:
                     new["mlist_cnt"] = rtmp["mlist_cnt"]
+                if rtmp.has_key("network") and rtmp["network"].has_key("pcap_id") and rtmp["network"]["pcap_id"]:
+                    new["pcap_id"] = rtmp["network"]["pcap_id"]
             if settings.MOLOCH_ENABLED:
                 if settings.MOLOCH_BASE[-1] != "/":
                     settings.MOLOCH_BASE = settings.MOLOCH_BASE + "/"
