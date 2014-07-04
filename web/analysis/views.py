@@ -51,14 +51,15 @@ def index(request):
                     new["suri_file_cnt"] = rtmp["suri_file_cnt"]
                 if rtmp.has_key("suri_http_cnt") and rtmp["suri_http_cnt"]:
                     new["suri_http_cnt"] = rtmp["suri_http_cnt"]
-                if rtmp.has_key("suricata") and rtmp["suricata"].has_key("http_log_id") and rtmp["suricata"]["http_log_id"]:
-                    new["suricata_http_log_id"] = rtmp["suricata"]["http_log_id"]
-                if rtmp.has_key("suricata") and rtmp["suricata"].has_key("tls_log_id") and rtmp["suricata"]["tls_log_id"]:
-                    new["suricata_tls_log_id"] = rtmp["suricata"]["tls_log_id"]
-                if rtmp.has_key("suricata") and rtmp["suricata"].has_key("fast_log_id") and rtmp["suricata"]["fast_log_id"]:
-                    new["suricata_fast_log_id"] = rtmp["suricata"]["fast_log_id"]
-                if rtmp.has_key("suricata") and rtmp["suricata"].has_key("file_log_id") and rtmp["suricata"]["file_log_id"]:
-                    new["suricata_file_log_id"] = rtmp["suricata"]["file_log_id"]
+                if rtmp.has_key("suricata") and rtmp["suricata"]:
+                    if rtmp["suricata"].has_key("http_log_id") and rtmp["suricata"]["http_log_id"]:
+                        new["suricata_http_log_id"] = rtmp["suricata"]["http_log_id"]
+                    if rtmp["suricata"].has_key("tls_log_id") and rtmp["suricata"]["tls_log_id"]:
+                        new["suricata_tls_log_id"] = rtmp["suricata"]["tls_log_id"]
+                    if rtmp["suricata"].has_key("fast_log_id") and rtmp["suricata"]["fast_log_id"]:
+                        new["suricata_fast_log_id"] = rtmp["suricata"]["fast_log_id"]
+                    if  rtmp["suricata"].has_key("file_log_id") and rtmp["suricata"]["file_log_id"]:
+                        new["suricata_file_log_id"] = rtmp["suricata"]["file_log_id"]
                 if rtmp.has_key("mlist_cnt") and rtmp["mlist_cnt"]:
                     new["mlist_cnt"] = rtmp["mlist_cnt"]
                 if rtmp.has_key("network") and rtmp["network"].has_key("pcap_id") and rtmp["network"]["pcap_id"]:
@@ -87,14 +88,15 @@ def index(request):
                     new["suri_file_cnt"] = rtmp["suri_file_cnt"]
                 if rtmp.has_key("suri_http_cnt") and rtmp["suri_http_cnt"]:
                     new["suri_http_cnt"] = rtmp["suri_http_cnt"]
-                if rtmp.has_key("suricata") and rtmp["suricata"].has_key("http_log_id") and rtmp["suricata"]["http_log_id"]:
-                    new["suricata_http_log_id"] = rtmp["suricata"]["http_log_id"]
-                if rtmp.has_key("suricata") and rtmp["suricata"].has_key("tls_log_id") and rtmp["suricata"]["tls_log_id"]:
-                    new["suricata_tls_log_id"] = rtmp["suricata"]["tls_log_id"]
-                if rtmp.has_key("suricata") and rtmp["suricata"].has_key("fast_log_id") and rtmp["suricata"]["fast_log_id"]:
-                    new["suricata_fast_log_id"] = rtmp["suricata"]["fast_log_id"]
-                if rtmp.has_key("suricata") and rtmp["suricata"].has_key("file_log_id") and rtmp["suricata"]["file_log_id"]:
-                    new["suricata_file_log_id"] = rtmp["suricata"]["file_log_id"]
+                if rtmp.has_key("suricata") and rtmp["suricata"]:
+                    if rtmp["suricata"].has_key("http_log_id") and rtmp["suricata"]["http_log_id"]:
+                        new["suricata_http_log_id"] = rtmp["suricata"]["http_log_id"]
+                    if rtmp["suricata"].has_key("tls_log_id") and rtmp["suricata"]["tls_log_id"]:
+                        new["suricata_tls_log_id"] = rtmp["suricata"]["tls_log_id"]
+                    if rtmp["suricata"].has_key("fast_log_id") and rtmp["suricata"]["fast_log_id"]:
+                        new["suricata_fast_log_id"] = rtmp["suricata"]["fast_log_id"]
+                    if  rtmp["suricata"].has_key("file_log_id") and rtmp["suricata"]["file_log_id"]:
+                        new["suricata_file_log_id"] = rtmp["suricata"]["file_log_id"]
                 if rtmp.has_key("mlist_cnt") and rtmp["mlist_cnt"]:
                     new["mlist_cnt"] = rtmp["mlist_cnt"]
                 if rtmp.has_key("network") and rtmp["network"].has_key("pcap_id") and rtmp["network"]["pcap_id"]:
@@ -378,14 +380,15 @@ def search(request):
                     new["suri_file_cnt"] = rtmp["suri_file_cnt"]
                 if rtmp.has_key("suri_http_cnt") and rtmp["suri_http_cnt"]:
                     new["suri_http_cnt"] = rtmp["suri_http_cnt"]
-                if rtmp.has_key("suricata") and rtmp["suricata"].has_key("http_log_id") and rtmp["suricata"]["http_log_id"]:
-                    new["suricata_http_log_id"] = rtmp["suricata"]["http_log_id"]
-                if rtmp.has_key("suricata") and rtmp["suricata"].has_key("tls_log_id") and rtmp["suricata"]["tls_log_id"]:
-                    new["suricata_tls_log_id"] = rtmp["suricata"]["tls_log_id"]
-                if rtmp.has_key("suricata") and rtmp["suricata"].has_key("fast_log_id") and rtmp["suricata"]["fast_log_id"]:
-                    new["suricata_fast_log_id"] = rtmp["suricata"]["fast_log_id"]
-                if rtmp.has_key("suricata") and rtmp["suricata"].has_key("file_log_id") and rtmp["suricata"]["file_log_id"]:
-                    new["suricata_file_log_id"] = rtmp["suricata"]["file_log_id"]
+                if rtmp.has_key("suricata") and rtmp["suricata"]:
+                    if rtmp["suricata"].has_key("http_log_id") and rtmp["suricata"]["http_log_id"]:
+                        new["suricata_http_log_id"] = rtmp["suricata"]["http_log_id"]
+                    if rtmp["suricata"].has_key("tls_log_id") and rtmp["suricata"]["tls_log_id"]:
+                        new["suricata_tls_log_id"] = rtmp["suricata"]["tls_log_id"]
+                    if rtmp["suricata"].has_key("fast_log_id") and rtmp["suricata"]["fast_log_id"]:
+                        new["suricata_fast_log_id"] = rtmp["suricata"]["fast_log_id"]
+                    if  rtmp["suricata"].has_key("file_log_id") and rtmp["suricata"]["file_log_id"]:
+                        new["suricata_file_log_id"] = rtmp["suricata"]["file_log_id"]
                 if rtmp.has_key("mlist_cnt") and rtmp["mlist_cnt"]:
                     new["mlist_cnt"] = rtmp["mlist_cnt"]
                 if rtmp.has_key("network") and rtmp["network"].has_key("pcap_id") and rtmp["network"]["pcap_id"]:
