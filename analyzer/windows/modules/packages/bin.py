@@ -4,11 +4,18 @@
 
 from lib.common.abstracts import Package
 from lib.api.process import Process
+from lib.api.utils import Utils
 
 class Shellcode(Package):
     """Shellcode (any x86 executable code) analysis package."""
 
     def start(self, path):
+        gw = self.options.get("setgw",None)
+
+        u = Utils()
+        if gw:
+           u.set_default_gw(gw)
+
         p = Process()
         dll = self.options.get("dll")
         p.execute(path="bin/execsc.exe", args=path, suspended=True)

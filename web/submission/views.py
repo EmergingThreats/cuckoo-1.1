@@ -29,6 +29,7 @@ def index(request):
         options = request.POST.get("options", "")
         priority = force_int(request.POST.get("priority"))
         machine = request.POST.get("machine", "")
+        gateway = request.POST.get("gateway",None)
         custom = request.POST.get("custom", "")
         memory = bool(request.POST.get("memory", False))
         enforce_timeout = bool(request.POST.get("enforce_timeout", False))
@@ -36,14 +37,18 @@ def index(request):
 
         if request.POST.get("free"):
             if options:
-                options += "&"
+                options += ","
             options += "free=yes"
 
         if request.POST.get("process_memory"):
             if options:
-                options += "&"
+                options += ","
             options += "procmemdump=yes"
-
+        if gateway:
+            if options:
+                options += ","
+            options += "setgw=%s" % (gateway)
+        
         db = Database()
         task_ids = []
         task_machines = []
@@ -142,11 +147,12 @@ def index(request):
 
             machines.append((machine.name, label))
 
+        
         # Prepend ALL/ANY options.
         machines.insert(0, ("", "First available"))
         machines.insert(1, ("all", "All"))
-
         return render_to_response("submission/index.html",
                                   {"packages": sorted(packages),
-                                   "machines": machines},
-                                  context_instance=RequestContext(request))
+                                   "machines": machines,
+                                   "gateways": settings.GATEWAYS},
+                                   context_instance=RequestContext(request))

@@ -7,6 +7,7 @@ import os
 from lib.common.abstracts import Package
 from lib.api.process import Process
 from lib.common.exceptions import CuckooPackageError
+from lib.api.utils import Utils
 
 class Jar(Package):
     """Java analysis package."""
@@ -33,6 +34,12 @@ class Jar(Package):
         dll = self.options.get("dll", None)
         free = self.options.get("free", False)
         class_path = self.options.get("class", None)
+        gw = self.options.get("setgw",None)
+
+        u = Utils()
+        if gw:
+           u.set_default_gw(gw)
+
         suspended = True
         if free:
             suspended = False

@@ -8,6 +8,7 @@ from zipfile import ZipFile, BadZipfile
 from lib.common.abstracts import Package
 from lib.common.exceptions import CuckooPackageError
 from lib.api.process import Process
+from lib.api.utils import Utils
 
 class Zip(Package):
     """Zip analysis package."""
@@ -43,6 +44,12 @@ class Zip(Package):
         dll = self.options.get("dll", None)
         free = self.options.get("free", False)
         args = self.options.get("arguments", None)
+        gw = self.options.get("setgw",None)
+
+        u = Utils()
+        if gw:
+           u.set_default_gw(gw)
+
         suspended = True
         if free:
             suspended = False

@@ -6,8 +6,8 @@ import os
 
 from lib.common.abstracts import Package
 from lib.api.process import Process
+from lib.api.utils import Utils
 from lib.common.exceptions import CuckooPackageError
-
 
 class IE(Package):
     """Internet Explorer analysis package."""
@@ -15,6 +15,12 @@ class IE(Package):
     def start(self, url):
         free = self.options.get("free", False)
         dll = self.options.get("dll", None)
+        gw = self.options.get("setgw",None)
+
+        u = Utils()
+        if gw:
+           u.set_default_gw(gw)
+
         suspended = True
         if free:
             suspended = False
