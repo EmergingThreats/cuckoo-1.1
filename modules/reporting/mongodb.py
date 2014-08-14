@@ -165,29 +165,29 @@ class MongoDB(Report):
                             new_suricata_files.append(tmp_suricata_file_d)
                 report["suricata"]["files"] = new_suricata_files
 
-                if results["suricata"].has_key("fast_full_path") and results["suricata"]["fast_full_path"]:
-                    suricata_fast_log = File(results["suricata"]["fast_full_path"])
-                    if suricata_fast_log.valid():
-                        suricata_fast_log_id = self.store_file(suricata_fast_log)
-                        report["suricata"]["fast_log_id"] = suricata_fast_log_id
+            if results["suricata"].has_key("fast_full_path") and results["suricata"]["fast_full_path"]:
+                 suricata_fast_log = File(results["suricata"]["fast_full_path"])
+                 if suricata_fast_log.valid():
+                    suricata_fast_log_id = self.store_file(suricata_fast_log)
+                    report["suricata"]["fast_log_id"] = suricata_fast_log_id
 
-                if results["suricata"].has_key("tls_full_path") and results["suricata"]["tls_full_path"]:
-                    tls_log = File(results["suricata"]["tls_full_path"])
-                    if tls_log.valid():
-                        tls_log_id = self.store_file(tls_log)
-                        report["suricata"]["tls_log_id"] = tls_log_id
+            if results["suricata"].has_key("tls_full_path") and results["suricata"]["tls_full_path"]:
+                tls_log = File(results["suricata"]["tls_full_path"])
+                if tls_log.valid():
+                    tls_log_id = self.store_file(tls_log)
+                    report["suricata"]["tls_log_id"] = tls_log_id
 
-                if results["suricata"].has_key("http_log_full_path") and results["suricata"]["http_log_full_path"]:
-                    http_log = File(results["suricata"]["http_log_full_path"])
-                    if http_log.valid():
-                        http_log_id = self.store_file(http_log)
-                        report["suricata"]["http_log_id"] = http_log_id
+            if results["suricata"].has_key("http_log_full_path") and results["suricata"]["http_log_full_path"]:
+                http_log = File(results["suricata"]["http_log_full_path"])
+                if http_log.valid():
+                    http_log_id = self.store_file(http_log)
+                    report["suricata"]["http_log_id"] = http_log_id
  
-                if results["suricata"].has_key("file_log_full_path") and results["suricata"]["file_log_full_path"]:
-                    file_log = File(results["suricata"]["file_log_full_path"])
-                    if file_log.valid():
-                        file_log_id = self.store_file(file_log)
-                        report["suricata"]["file_log_id"] = file_log_id
+            if results["suricata"].has_key("file_log_full_path") and results["suricata"]["file_log_full_path"]:
+                file_log = File(results["suricata"]["file_log_full_path"])
+                if file_log.valid():
+                    file_log_id = self.store_file(file_log)
+                    report["suricata"]["file_log_id"] = file_log_id
 
         # Add screenshots.
         report["shots"] = []
