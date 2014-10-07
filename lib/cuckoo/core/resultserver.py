@@ -286,49 +286,60 @@ class Resulthandler(SocketServer.BaseRequestHandler):
                 log.error("Unable to create folder %s" % folder)
                 return False
 
-
 class FileUpload(object):
+    RESTRICTED_DIRECTORIES = "reports/",
+
     def __init__(self, handler):
         self.handler = handler
         self.upload_max_size = \
             self.handler.server.cfg.resultserver.upload_max_size
         self.storagepath = self.handler.storagepath
+        self.fd = None
 
     def read_next_message(self):
-        # read until newline for file path
-        # e.g. shots/0001.jpg or files/9498687557/libcurl-4.dll.bin
+        # Read until newline for file path, e.g.,
+        # shots/0001.jpg or files/9498687557/libcurl-4.dll.bin
 
         buf = self.handler.read_newline().strip().replace("\\", "/")
         log.debug("File upload request for {0}".format(buf))
 
-        if "../" in buf:
-            raise CuckooOperationalError("FileUpload failure, banned path.")
-
         dir_part, filename = os.path.split(buf)
 
-        if dir_part:
-            try:
-                create_folder(self.storagepath, dir_part)
-            except CuckooOperationalError:
-                log.error("Unable to create folder %s" % dir_part)
-                return False
+        if "./" in buf or not dir_part or buf.startswith("/"):
+            raise CuckooOperationalError("FileUpload failure, banned path.")
+
+        for restricted in self.RESTRICTED_DIRECTORIES:
+            if restricted in dir_part:
+                raise CuckooOperationalError("FileUpload failure, banned path.")
+
+        try:
+            create_folder(self.storagepath, dir_part)
+        except CuckooOperationalError:
+            log.error("Unable to create folder %s" % dir_part)
+            return False
 
         file_path = os.path.join(self.storagepath, buf.strip())
 
-        fd = open(file_path, "wb")
+        self.fd = open(file_path, "wb")
         chunk = self.handler.read_any()
         while chunk:
-            fd.write(chunk)
+            self.fd.write(chunk)
 
-            if fd.tell() >= self.upload_max_size:
-                fd.write("... (truncated)")
+            if self.fd.tell() >= self.upload_max_size:
+                self.fd.write("... (truncated)")
                 break
 
-            chunk = self.handler.read_any()
+            try:
+                chunk = self.handler.read_any()
+            except:
+                break
 
-        log.debug("Uploaded file length: {0}".format(fd.tell()))
-        fd.close()
+        log.debug("Uploaded file length: {0}".format(self.fd.tell()))
 
+
+    def close(self):
+        if self.fd:
+            self.fd.close()
 
 class LogHandler(object):
     def __init__(self, handler):
