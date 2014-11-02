@@ -39,7 +39,7 @@ def index(request):
             if db.view_errors(task.id):
                 new["errors"] = True
 
-            rtmp = results_db.analysis.find_one({"info.id": int(new["id"])},{"virustotal_summary": 1, "suri_tls_cnt": 1, "suri_alert_cnt": 1, "suri_http_cnt": 1, "suri_file_cnt": 1, "suricata.http_log_id": 1, "suricata.tls_log_id": 1, "suricata.fast_log_id": 1, "suricata.file_log_id": 1, "mlist_cnt": 1, "network.pcap_id":1},sort=[("_id", pymongo.DESCENDING)])
+            rtmp = results_db.analysis.find_one({"info.id": int(new["id"])},{"virustotal_summary": 1, "suri_tls_cnt": 1, "suri_alert_cnt": 1, "suri_http_cnt": 1, "suri_file_cnt": 1, "suricata.http_log_id": 1, "suricata.tls_log_id": 1, "suricata.fast_log_id": 1, "suricata.file_log_id": 1, "mlist_cnt": 1, "network.pcap_id":1,"info.custom":1},sort=[("_id", pymongo.DESCENDING)])
             if rtmp:
                 if rtmp.has_key("virustotal_summary") and rtmp["virustotal_summary"]:
                     new["virustotal_summary"] = rtmp["virustotal_summary"]
@@ -64,6 +64,8 @@ def index(request):
                     new["mlist_cnt"] = rtmp["mlist_cnt"]
                 if rtmp.has_key("network") and rtmp["network"].has_key("pcap_id") and rtmp["network"]["pcap_id"]:
                     new["pcap_id"] = rtmp["network"]["pcap_id"]
+                if rtmp.has_key("info") and rtmp["info"].has_key("custom") and rtmp["info"]["custom"]:
+                    new["custom"] = rtmp["info"]["custom"]
             if settings.MOLOCH_ENABLED:
                 if settings.MOLOCH_BASE[-1] != "/":
                     settings.MOLOCH_BASE = settings.MOLOCH_BASE + "/"
@@ -76,7 +78,7 @@ def index(request):
 
             if db.view_errors(task.id):
                 new["errors"] = True
-            rtmp = results_db.analysis.find_one({"info.id": int(new["id"])},{"virustotal_summary": 1, "suri_tls_cnt": 1, "suri_alert_cnt": 1, "suri_http_cnt": 1, "suri_file_cnt": 1, "suricata.http_log_id": 1, "suricata.tls_log_id": 1, "suricata.fast_log_id": 1, "suricata.file_log_id": 1, "mlist_cnt": 1, "network.pcap_id":1},sort=[("_id", pymongo.DESCENDING)])
+            rtmp = results_db.analysis.find_one({"info.id": int(new["id"])},{"virustotal_summary": 1, "suri_tls_cnt": 1, "suri_alert_cnt": 1, "suri_http_cnt": 1, "suri_file_cnt": 1, "suricata.http_log_id": 1, "suricata.tls_log_id": 1, "suricata.fast_log_id": 1, "suricata.file_log_id": 1, "mlist_cnt": 1, "network.pcap_id":1, "info.custom":1},sort=[("_id", pymongo.DESCENDING)])
             if rtmp:
                 if rtmp.has_key("virustotal_summary") and rtmp["virustotal_summary"]:
                     new["virustotal_summary"] = rtmp["virustotal_summary"]
@@ -101,6 +103,8 @@ def index(request):
                     new["mlist_cnt"] = rtmp["mlist_cnt"]
                 if rtmp.has_key("network") and rtmp["network"].has_key("pcap_id") and rtmp["network"]["pcap_id"]:
                     new["pcap_id"] = rtmp["network"]["pcap_id"]
+                if rtmp.has_key("info") and rtmp["info"].has_key("custom") and rtmp["info"]["custom"]:
+                    new["custom"] = rtmp["info"]["custom"]
             if settings.MOLOCH_ENABLED:
                 if settings.MOLOCH_BASE[-1] != "/":
                     settings.MOLOCH_BASE = settings.MOLOCH_BASE + "/"
@@ -330,6 +334,8 @@ def search(request):
                 records = results_db.analysis.find({"strings": {"$regex": value, "$options": "-i"}}).sort([["_id", -1]])
             elif term == "virustotal":
                 records = results_db.analysis.find({"virustotal.results.sig": {"$regex": value, "$options": "-i"}}).sort([["_id", -1]])
+            elif term == "custom":
+                records = results_db.analysis.find({"info.custom": {"$regex": value, "$options": "-i"}}).sort([["_id", -1]])
             else:
                 return render_to_response("analysis/search.html",
                                           {"analyses": None,
@@ -368,7 +374,7 @@ def search(request):
                     if sample:
                         new["sample"] = sample.to_dict()
 
-            rtmp = results_db.analysis.find_one({"info.id": int(new["id"])},{"virustotal_summary": 1, "suri_tls_cnt": 1, "suri_alert_cnt": 1, "suri_http_cnt": 1, "suri_file_cnt": 1, "suricata.http_log_id": 1, "suricata.tls_log_id": 1, "suricata.fast_log_id": 1, "suricata.file_log_id": 1, "mlist_cnt": 1, "network.pcap_id":1},sort=[("_id", pymongo.DESCENDING)])
+            rtmp = results_db.analysis.find_one({"info.id": int(new["id"])},{"virustotal_summary": 1, "suri_tls_cnt": 1, "suri_alert_cnt": 1, "suri_http_cnt": 1, "suri_file_cnt": 1, "suricata.http_log_id": 1, "suricata.tls_log_id": 1, "suricata.fast_log_id": 1, "suricata.file_log_id": 1, "mlist_cnt": 1, "network.pcap_id":1, "info.custom":1},sort=[("_id", pymongo.DESCENDING)])
             if rtmp:
                 if rtmp.has_key("virustotal_summary") and rtmp["virustotal_summary"]:
                     new["virustotal_summary"] = rtmp["virustotal_summary"]
@@ -393,6 +399,8 @@ def search(request):
                     new["mlist_cnt"] = rtmp["mlist_cnt"]
                 if rtmp.has_key("network") and rtmp["network"].has_key("pcap_id") and rtmp["network"]["pcap_id"]:
                     new["pcap_id"] = rtmp["network"]["pcap_id"]
+                if rtmp.has_key("info") and rtmp["info"].has_key("custom") and rtmp["info"]["custom"]:
+                    new["custom"] = rtmp["info"]["custom"]
             if settings.MOLOCH_ENABLED:
                 if settings.MOLOCH_BASE[-1] != "/":
                     settings.MOLOCH_BASE = settings.MOLOCH_BASE + "/"
