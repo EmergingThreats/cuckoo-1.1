@@ -4,6 +4,9 @@
 
 import os
 import sys
+import random
+import requests
+import tempfile
 
 from django.conf import settings
 from django.shortcuts import render_to_response
@@ -45,9 +48,14 @@ def index(request):
                 options += ","
             options += "procmemdump=yes"
         if gateway:
+            if "," in settings.GATEWAYS[gateway]:
+                tgateway = random.choice(settings.GATEWAYS[gateway].split(","))
+                ngateway = settings.GATEWAYS[tgateway]
+            else:
+                ngateway = settings.GATEWAYS[gateway]
             if options:
                 options += ","
-            options += "setgw=%s" % (gateway)
+            options += "setgw=%s" % (ngateway)
         
         db = Database()
         task_ids = []
@@ -87,7 +95,8 @@ def index(request):
                                       tags=tags)
                 if task_id:
                     task_ids.append(task_id)
-        elif "url" in request.POST:
+
+        elif "url" in request.POST and request.POST.get("url").strip():
             url = request.POST.get("url").strip()
             if not url:
                 return render_to_response("error.html",
@@ -105,8 +114,48 @@ def index(request):
                                      memory=memory,
                                      enforce_timeout=enforce_timeout,
                                      tags=tags)
+
                 if task_id:
                     task_ids.append(task_id)
+
+
+        elif settings.VTDL_ENABLED and "vtdl" in request.POST:
+                vtdl = request.POST.get("vtdl").strip()
+                if settings.VTDL_KEY == None or settings.VTDL_PATH == None:
+                    return render_to_response("error.html",
+                                              {"error": "You specified VirusTotal but must edit the file and specify your VTDL_KEY variable and VTDL_PATH base directory"},
+                                              context_instance=RequestContext(request))
+                else:
+                    base_dir = tempfile.mkdtemp(prefix='cuckoovtdl',dir=settings.VTDL_PATH)
+                    hashlist = []
+                    if "," in vtdl:
+                        hashlist=vtdl.split(",")
+                    else:
+                        hashlist.append(vtdl)
+
+                    for h in hashlist:
+                        filename = base_dir + "/" + h
+                        url = 'http://www.virustotal.com/vtapi/v2/file/download'
+                        params = {'apikey': settings.VTDL_KEY, 'hash': h}
+
+                        r = requests.get(url, params=params)
+                        if r.status_code == 200:
+                            f = open(filename, 'wb')
+                            f.write(r.content)
+                            f.close()
+                            for entry in task_machines:
+                                task_id = db.add_path(file_path=filename,
+                                          package=package,
+                                          timeout=timeout,
+                                          options=options,
+                                          priority=priority,
+                                          machine=entry,
+                                          custom=custom,
+                                          memory=memory,
+                                          enforce_timeout=enforce_timeout,
+                                          tags=tags)
+                                if task_id:
+                                    task_ids.append(task_id)
 
         tasks_count = len(task_ids)
         if tasks_count > 0:
@@ -154,5 +203,6 @@ def index(request):
         return render_to_response("submission/index.html",
                                   {"packages": sorted(packages),
                                    "machines": machines,
-                                   "gateways": settings.GATEWAYS},
+                                   "gateways": settings.GATEWAYS,
+                                   "vtdlenabled": settings.VTDL_ENABLED},
                                    context_instance=RequestContext(request))

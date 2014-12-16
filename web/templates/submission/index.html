@@ -57,6 +57,9 @@ $(document).ready( function() {
                 <ul class="nav nav-tabs">
                     <li class="active"><a href="#file" data-toggle="tab"><span class="glyphicon glyphicon-file"></span> File</a></li>
                     <li><a href="#url" data-toggle="tab"><span class="glyphicon glyphicon-globe"></span> URL</a></li>
+                    {% if vtdlenabled %}
+                        <li><a href="#vtdl" data-toggle="tab"><span class="glyphicon glyphicon-globe"></span>VTDL</a></li>
+                    {% endif %}
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane fade in active" id="file">
@@ -75,8 +78,17 @@ $(document).ready( function() {
                             <input type="text" class="form-control" id="form_url" name="url" placeholder="URL" />
                         </div>
                     </div>
+                   {% if vtdlenabled %}
+                    <div class="tab-pane fade" id="vtdl">
+                        <div class="input-group">
+                            <label class="sr-only" form="form_vtdl">VirusTotal Download</label>
+                            <input type="text" class="form-control" id="form_vtdl" name="vtdl" placeholder="VTDL" />
+                        </div>
+                    </div>
+                   {% endif %}
                 </div>
             </div>
+
             <div class="panel" id="accordion" style="margin-top: 20px;">
                 <div class="panel panel-default">
                     <div class="panel-heading">
@@ -97,7 +109,7 @@ $(document).ready( function() {
                                 <select class="form-control" id="form_gateway" name="gateway">
                                 <option value="" active>Default</option>
                                 {% for k,v in gateways.items %}
-                                    <option value="{{v}}">{{k}}</option>
+                                    <option value="{{k}}">{{k}}</option>
                                 {% endfor %}
                                 </select>
                             </div>

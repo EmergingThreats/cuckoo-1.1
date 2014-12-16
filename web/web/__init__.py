@@ -15,7 +15,7 @@ from lib.cuckoo.common.config import Config
 cfg = Config(cfg=os.path.join(CUCKOO_ROOT, "conf", "reporting.conf")).mongodb
 moloch_cfg = Config(cfg=os.path.join(CUCKOO_ROOT, "conf", "reporting.conf")).moloch
 aux_cfg =  Config(cfg=os.path.join(CUCKOO_ROOT, "conf", "auxiliary.conf"))
-
+vtdl_cfg = Config(cfg=os.path.join(CUCKOO_ROOT, "conf", "auxiliary.conf")).virustotaldl
 # Checks if mongo reporting is enabled in Cuckoo.
 if not cfg.get("enabled"):
     raise Exception("Mongo reporting module is not enabled in cuckoo, aborting!")
@@ -30,3 +30,6 @@ settings.MOLOCH_NODE = moloch_cfg.get("node", None)
 settings.MOLOCH_ENABLED = moloch_cfg.get("enabled", False)
 
 settings.GATEWAYS = aux_cfg.get("gateways")
+settings.VTDL_ENABLED = vtdl_cfg.get("enabled",False)
+settings.VTDL_KEY = vtdl_cfg.get("dlkey",None)
+settings.VTDL_PATH = vtdl_cfg.get("dlpath",None)
