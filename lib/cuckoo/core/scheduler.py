@@ -183,7 +183,28 @@ class AnalysisManager(Thread):
         options["options"] = self.task.options
         options["enforce_timeout"] = self.task.enforce_timeout
         options["clock"] = self.task.clock
-
+        try:
+            blah = Database().view_machine(self.machine.name)
+            for tag in blah.tags:
+                if tag.name == "never_inject":
+                    tmp_options = [] 
+                    free_found = False
+                    if "," in options["options"]:
+                        fields = options["options"].strip().split(",")
+                        for field in fields:
+                            key, value = field.strip().split("=")
+                            if key == "free":
+                                free_found = True
+                                value = "yes"
+                                tmp_options.append("%s=%s")
+                            else:
+                                tmp_options.append(field)
+                    if not free_found:
+                        tmp_options.append("free=yes")
+                    options["options"]=",".join(tmp_options)
+        except Exception as e:
+            print "could not print machine tags %s" % (e)
+        
         if not self.task.timeout or self.task.timeout == 0:
             options["timeout"] = self.cfg.timeouts.default
         else:
@@ -226,7 +247,6 @@ class AnalysisManager(Thread):
 
         # Generate the analysis configuration file.
         options = self.build_options()
-
         # At this point we can tell the Resultserver about it.
         try:
             Resultserver().add_task(self.task, self.machine)
