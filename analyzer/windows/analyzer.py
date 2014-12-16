@@ -398,6 +398,7 @@ class Analyzer:
     def prepare(self):
         """Prepare env for analysis."""
         global DEFAULT_DLL
+        global NO_HUMAN
 
         # Get SeDebugPrivilege for the Python process. It will be needed in
         # order to perform the injections.
@@ -427,6 +428,9 @@ class Analyzer:
         # Set the default DLL to be used by the PipeHandler.
         DEFAULT_DLL = self.get_options().get("dll", None)
 
+        #Disable Human Interaction
+        NO_HUMAN = self.get_options().get("nohuman", False)
+
         # Initialize and start the Pipe Servers. This is going to be used for
         # communicating with the injected and monitored processes.
         for x in xrange(self.PIPE_SERVER_COUNT):
@@ -455,6 +459,7 @@ class Analyzer:
         # accessible to the analysis package.
         options = {}
         if self.config.options:
+            log.warning("options string %s", self.config.options)
             try:
                 # Split the options by comma.
                 fields = self.config.options.strip().split(",")
@@ -563,6 +568,9 @@ class Analyzer:
             # Try to start the auxiliary module.
             try:
                 aux = module()
+                if aux.__class__.__name__ == "Human" and NO_HUMAN:
+                    log.info(NO_HUMAN)
+                    continue
                 aux.start()
             except (NotImplementedError, AttributeError):
                 log.warning("Auxiliary module %s was not implemented",
