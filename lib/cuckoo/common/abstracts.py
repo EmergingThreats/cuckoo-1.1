@@ -182,7 +182,12 @@ class Machinery(object):
         """How many machines are free.
         @return: free machines count.
         """
-        return self.db.count_machines_available()
+         
+        if len(self.db.list_machines(locked=True)) >= self.options_globals.processing.max_simultaneous_jobs:
+           log.warning("Hit maximum processing limit")
+           return 0
+        else: 
+           return self.db.count_machines_available()
 
     def acquire(self, machine_id=None, platform=None, tags=None):
         """Acquire a machine to start analysis.
