@@ -12,3 +12,7 @@ fi
 
 rm -rf $PWD/db/ $PWD/log/ $PWD/storage/
 find $PWD/ -name '*.pyc' -exec rm {} \;
+mongo cuckoo --eval "db.dropDatabase()"
+/data/moloch/db/db.pl 127.0.0.1:9200 wipe
+/bin/rm -f /data/moloch/raw/*
+
