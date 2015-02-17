@@ -1,5 +1,11 @@
-<section id="suri_http">
-    <h4>Suricata http</h4>
+{% extends "base.html" %}
+{% block content %}
+<p style="margin-bottom: 10px;"><img src="{{ STATIC_URL }}graphic/cuckoo.png" /></p>
+<ul class="nav nav-tabs">
+    <li class="active"><a href="#surihttp " data-toggle="tab">SuriHTTP</a></li>
+</ul>
+<div class="tab-content">
+    <div class="tab-pane fade in active" id="surihttp">
     {% if suricata.http %}
         <table class="table table-stripped" style="table-layout: fixed;">
             <tr>
@@ -94,4 +100,6 @@
     {% else %}
         <p>No Suricata HTTP</p>
     {% endif %}
-</section>
+    </div>
+</div>
+{% endblock %}

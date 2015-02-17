@@ -119,14 +119,6 @@ class MongoDB(Report):
             report["network"] = {"pcap_id": pcap_id}
             report["network"].update(results["network"])
 
-        # Store the suri extracted files in GridFS and reference it back in the report.
-        suri_extracted_zip_path = os.path.join(self.analysis_path, "logs/files.zip")
-        suri_extracted_zip = File(suri_extracted_zip_path)
-        if suri_extracted_zip.valid():
-            suri_extracted_zip_id = self.store_file(suri_extracted_zip)
-            report["suricata"] = {"suri_extracted_zip": suri_extracted_zip_id}
-            report["suricata"].update(results["suricata"])
-
         # Walk through the dropped files, store them in GridFS and update the
         # report with the ObjectIds.
         new_dropped = []
@@ -149,45 +141,6 @@ class MongoDB(Report):
         #    report["zippeddroppings"] = {"cuckoo_droppings_id": cuckoo_droppings_id}
         #    report["zippeddroppings"].update(results["zippeddroppings"])
 
-
-        # Walk through the suricata extracted files, store them in GridFS and update the
-        # report with the ObjectIds.
-        new_suricata_files = []
-        if results.has_key("suricata") and results["suricata"]:
-            if results["suricata"].has_key("files") and results["suricata"]["files"]:
-                for suricata_file_e in results["suricata"]["files"]:
-                    if suricata_file_e.has_key("file_info"):
-                        tmp_suricata_file_d = dict(suricata_file_e)
-                        suricata_file = File(suricata_file_e["file_info"]["path"])
-                        if suricata_file.valid():
-                            suricata_file_id = self.store_file(suricata_file, filename=suricata_file_e["file_info"]["name"])
-                            tmp_suricata_file_d["object_id"] = suricata_file_id
-                            new_suricata_files.append(tmp_suricata_file_d)
-                report["suricata"]["files"] = new_suricata_files
-
-            if results["suricata"].has_key("fast_full_path") and results["suricata"]["fast_full_path"]:
-                 suricata_fast_log = File(results["suricata"]["fast_full_path"])
-                 if suricata_fast_log.valid():
-                    suricata_fast_log_id = self.store_file(suricata_fast_log)
-                    report["suricata"]["fast_log_id"] = suricata_fast_log_id
-
-            if results["suricata"].has_key("tls_full_path") and results["suricata"]["tls_full_path"]:
-                tls_log = File(results["suricata"]["tls_full_path"])
-                if tls_log.valid():
-                    tls_log_id = self.store_file(tls_log)
-                    report["suricata"]["tls_log_id"] = tls_log_id
-
-            if results["suricata"].has_key("http_log_full_path") and results["suricata"]["http_log_full_path"]:
-                http_log = File(results["suricata"]["http_log_full_path"])
-                if http_log.valid():
-                    http_log_id = self.store_file(http_log)
-                    report["suricata"]["http_log_id"] = http_log_id
- 
-            if results["suricata"].has_key("file_log_full_path") and results["suricata"]["file_log_full_path"]:
-                file_log = File(results["suricata"]["file_log_full_path"])
-                if file_log.valid():
-                    file_log_id = self.store_file(file_log)
-                    report["suricata"]["file_log_id"] = file_log_id
 
         # Add screenshots.
         report["shots"] = []
@@ -247,17 +200,80 @@ class MongoDB(Report):
         report["behavior"]["processes"] = new_processes
 
         #Other info we want Quick access to from the web UI
-        if results.has_key("virustotal") and results["virustotal"] and results["virustotal"].has_key("positives") and results["virustotal"].has_key("total"):
-            report["virustotal_summary"] = "%s/%s" % (results["virustotal"]["positives"],results["virustotal"]["total"])
-        if results.has_key("suricata") and results["suricata"]:
-            if results["suricata"].has_key("tls") and len(results["suricata"]["tls"]) > 0:
-                report["suri_tls_cnt"] = len(results["suricata"]["tls"])
-            if results["suricata"] and results["suricata"].has_key("alerts") and len(results["suricata"]["alerts"]) > 0:
-                report["suri_alert_cnt"] = len(results["suricata"]["alerts"])
-            if results["suricata"].has_key("files") and len(results["suricata"]["files"]) > 0:
-                report["suri_file_cnt"] = len(results["suricata"]["files"])
-            if results["suricata"].has_key("http") and len(results["suricata"]["http"]) > 0:
-                report["suri_http_cnt"] = len(results["suricata"]["http"])
+        if report.has_key("virustotal") and report["virustotal"] and report["virustotal"].has_key("positives") and results["virustotal"].has_key("total"):
+            report["virustotal_summary"] = "%s/%s" % (report["virustotal"]["positives"],report["virustotal"]["total"])
+
+        new_suricata_files = []
+        if report.has_key("suricata") and report["suricata"]:
+            suricata={}
+            suricata["info"]={}
+            suricata["info"]["id"]=report["info"]["id"]
+            # Walk through the suricata extracted files, store them in GridFS and update the
+            # report with the ObjectIds
+            # Store the suri extracted files in GridFS and reference it back in the report.
+            suri_extracted_zip_path = os.path.join(self.analysis_path, "logs/files.zip")
+            suri_extracted_zip = File(suri_extracted_zip_path)
+            if suri_extracted_zip.valid():
+                suri_extracted_zip_id = self.store_file(suri_extracted_zip)
+                suricata["suri_extracted_zip"]=suri_extracted_zip_id
+
+            if report["suricata"].has_key("files") and len(report["suricata"]["files"]) > 0:
+                suricata["file_cnt"] = len(report["suricata"]["files"])
+                for suricata_file_e in report["suricata"]["files"]:
+                    if suricata_file_e.has_key("file_info"):
+                        tmp_suricata_file_d = dict(suricata_file_e)
+                        suricata_file = File(suricata_file_e["file_info"]["path"])
+                        if suricata_file.valid():
+                            suricata_file_id = self.store_file(suricata_file, filename=suricata_file_e["file_info"]["name"])
+                            tmp_suricata_file_d["object_id"] = suricata_file_id
+                            new_suricata_files.append(tmp_suricata_file_d)
+                suricata["files"] = new_suricata_files
+            if report["suricata"].has_key("alert_log_full_path") and report["suricata"]["alert_log_full_path"]:
+                 suricata_alert_log = File(report["suricata"]["alert_log_full_path"])
+                 if suricata_alert_log.valid():
+                    suricata_alert_log_id = self.store_file(suricata_alert_log)
+                    suricata["alert_log_id"] = suricata_alert_log_id
+
+            if report["suricata"].has_key("tls_log_full_path") and report["suricata"]["tls_log_full_path"]:
+                tls_log = File(report["suricata"]["tls_log_full_path"])
+                if tls_log.valid():
+                    tls_log_id = self.store_file(tls_log)
+                    suricata["tls_log_id"] = tls_log_id
+
+            if report["suricata"].has_key("http_log_full_path") and report["suricata"]["http_log_full_path"]:
+                http_log = File(report["suricata"]["http_log_full_path"])
+                if http_log.valid():
+                    http_log_id = self.store_file(http_log)
+                    suricata["http_log_id"] = http_log_id
+
+            if report["suricata"].has_key("file_log_full_path") and report["suricata"]["file_log_full_path"]:
+                file_log = File(report["suricata"]["file_log_full_path"])
+                if file_log.valid():
+                    file_log_id = self.store_file(file_log)
+                    suricata["file_log_id"] = file_log_id
+            if report["suricata"].has_key("dns_log_full_path") and report["suricata"]["dns_log_full_path"]:
+                dns_log = File(report["suricata"]["dns_log_full_path"])
+                if dns_log.valid():
+                    dns_log_id = self.store_file(dns_log)
+                    suricata["dns_log_id"] = dns_log_id
+            if report["suricata"].has_key("ssh_log_full_path") and report["suricata"]["ssh_log_full_path"]:
+                ssh_log = File(report["suricata"]["ssh_log_full_path"])
+                if ssh_log.valid():
+                    ssh_log_id = self.store_file(ssh_log)
+                    suricata["ssh_log_id"] = ssh_log_id
+
+            if report["suricata"].has_key("tls") and len(report["suricata"]["tls"]) > 0:
+                suricata["tls_cnt"] = len(report["suricata"]["tls"])
+                suricata["tls"]=report["suricata"]["tls"]
+            if report["suricata"] and report["suricata"].has_key("alerts") and len(report["suricata"]["alerts"]) > 0:
+                suricata["alert_cnt"] = len(report["suricata"]["alerts"])
+                suricata["alerts"]=report["suricata"]["alerts"]
+            if results["suricata"].has_key("http") and len(report["suricata"]["http"]) > 0:
+                suricata["http_cnt"] = len(report["suricata"]["http"])
+                suricata["http"]=report["suricata"]["http"]
+            self.db.suricata.save(suricata)
+            #do not store this in analysis collection
+            del report["suricata"]
         if results.has_key("behavior") and results["behavior"].has_key("martianlist") and results["behavior"]["martianlist"] and len(results["behavior"]["martianlist"]) > 0:
             report["mlist_cnt"] = len(results["behavior"]["martianlist"])
 

@@ -1,8 +1,8 @@
-{% if analysis.suricata.files|length > 0 %}
-   {% if analysis.suricata.suri_extracted_zip %}
-       <div class="alert alert-info center"><a class="btn btn-primary btn-small" href="{% url "analysis.views.file" "zip" analysis.suricata.suri_extracted_zip %}">Download Suri Extracted</a></div>
+{% if suricata.files|length > 0 %}
+   {% if suricata.suri_extracted_zip %}
+       <div class="alert alert-info center"><a class="btn btn-primary btn-small" href="{% url "analysis.views.file" "zip" suricata.suri_extracted_zip %}">Download Suri Extracted</a></div>
     {% endif %}
-    {% for file in analysis.suricata.files %}
+    {% for file in suricata.files %}
         <div class="panel panel-default">
             <table class="table table-striped">
                 <tr>
@@ -19,11 +19,15 @@
                 </tr>
                 <tr>
                     <th>File URL</th>
-                    <td>{{file.http_uri}}</th>
+                    <td>{{file.http_uri}}
+                        {% if file.moloch_uri_url %} <a href={{file.moloch_uri_url}} target="_blank"><span class="mono">MLCH</span></a>{% endif %}
+                    </th>
                 </tr>
                 <tr>
                     <th>Host</th>
-                    <td>{{file.http_host}}</th>
+                    <td>{{file.http_host}}
+                        {% if file.moloch_host_url %} <a href={{file.moloch_host_url}} target="_blank"><span class="mono">MLCH</span></a>{% endif %}
+                    </th>
                 </tr>
                 <tr>
                     <th>HTTP Referer</th>
@@ -31,35 +35,49 @@
                 </tr>
                 <tr>
                     <th>MD5</th>
-                    <td>{{file.md5}}</th>
+                    <td>{{file.md5}}
+                        {% if file.moloch_md5_url %} <a href={{file.moloch_md5_url}} target="_blank"><span class="mono">MLCH</span></a>{% endif %}
+                    </th>
                 </tr>
                 <tr>
                     <th>SHA1</th>
-                    <td>{{file.file_info.sha1}}</th>
+                    <td>{{file.file_info.sha1}}
+                        {% if file.moloch_sha1_url %} <a href={{file.moloch_sha1_url}} target="_blank"><span class="mono">MLCH</span></a>{% endif %}
+                    </th>
                 </tr>
                 <tr>
                     <th>SHA256</th>
-                    <td>{{file.file_info.sha256}}</th>
+                    <td>{{file.file_info.sha256}}
+                        {% if file.moloch_sha256_url %} <a href={{file.moloch_sha256_url}} target="_blank"><span class="mono">MLCH</span></a>{% endif %}
+                    </th>
                 </tr>
                 <tr>
                     <th>CRC32</th>
-                    <td>{{file.file_info.crc32}}</th>
+                    <td>{{file.file_info.crc32}}
+                        {% if file.moloch_crc32_url %} <a href={{file.moloch_crc32_url}} target="_blank"><span class="mono">MLCH</span></a>{% endif %}
+                    </th>
                 </tr>
                 <tr>
                     <th>Ssdeep</th>
-                    <td>{{file.file_info.ssdeep}}</th>
+                    <td>{{file.file_info.ssdeep}}
+                        {% if file.moloch_ssdeep_url %} <a href={{file.moloch_ssdeep_url}} target="_blank"><span class="mono">MLCH</span></a>{% endif %}
+                    </th>
                 </tr>
                 <tr>
                     <th>ClamAV</th>
-                    <td>{{file.file_info.clamav}}</th>
+                    <td>{{file.file_info.clamav}}
+                        {% if file.moloch_clamav_url %} <a href={{file.moloch_clamav_url}} target="_blank"><span class="mono">MLCH</span></a>{% endif %}
+                    </th>
                 </tr>
                 <tr>
                     <th>Yara</th>
                     <td>
-                    {% if file.yara %}
+                    {% if file.file_info.yara %}
                         <ul style="margin-bottom: 0;">
                         {% for sign in file.fileinfo.yara %}
-                            <li>{{sign.name}} - {{sign.meta.description}}</li>
+                            <li>{{sign.name}} - {{sign.meta.description}}
+                                {% if sign.moloch_yara_url %} <a href={{sign.moloch_yara_url}} target="_blank"><span class="mono">MLCH</span></a>{% endif %}
+                            </li>
                         {% endfor %}
                         </ul>
                     {% else %}

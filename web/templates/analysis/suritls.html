@@ -1,6 +1,12 @@
-<section id="suri_http">
-    <h4>Suricata http</h4>
-    {% if suricata.http %}
+{% extends "base.html" %}
+{% block content %}
+<p style="margin-bottom: 10px;"><img src="{{ STATIC_URL }}graphic/cuckoo.png" /></p>
+<ul class="nav nav-tabs">
+    <li class="active"><a href="#suritls " data-toggle="tab">SuriTLS</a></li>
+</ul>
+<div class="tab-content">
+    <div class="tab-pane fade in active" id="suritls">
+    {% if suricata.tls %}
         <table class="table table-stripped" style="table-layout: fixed;">
             <tr>
                 <th>TS</th>
@@ -8,13 +14,12 @@
                 <th>SPORT</th>
                 <th>DST</th>
                 <th>DPORT</th>
-                <th>HOST</th>
-                <th>URL</th>
-                <th>UA</th>
-                <th>VERB</th>
-                <th>REFERER</th>
+                <th>SUBJECT</th>
+                <th>ISSUERDN</th>
+                <th>FINGERPRINT</th>
+                <th>VERSION</th>
             </tr>
-            {% for e in suricata.http %}
+            {% for e in suricata.tls %}
             <tr>
                     <td>{{e.timestamp}}</td>
                     <td>
@@ -50,40 +55,29 @@
                     {% endif %}
                     </td>
                     <td>
-                    {%if e.http.hostname %}
-                      {{e.http.hostname}}
-                      {% if e.moloch_http_host_url %} <a href={{e.moloch_http_host_url}} target="_blank"><span class="mono">MLCH</span></a>{% endif %}
+                    {%if e.tls.subject %}
+                      {{e.tls.subject}}
                     {% else %}
                         <span class="mono">None</span>
                     {% endif %}
                     </td>
                     <td>
-                    {%if e.http.url %}
-                      {{e.http.url}}
-                      {% if e.moloch_http_uri_url %}<a href={{e.moloch_http_uri_url}} target="_blank"><span class="mono">MLCH</span></a>{% endif %}
+                    {%if e.tls.issuerdn %}
+                      {{e.tls.issuerdn}}
                     {% else %}
                         <span class="mono">None</span>
                     {% endif %}
                     </td>
                     <td>
-                    {%if e.http.http_user_agent %}
-                      {{e.http.http_user_agent}}
-                      {% if e.moloch_http_ua_url %} <a href={{e.moloch_http_ua_url}} target="_blank"><span class="mono">MLCH</span></a>{% endif %}
+                    {%if e.tls.fingerprint %}
+                      {{e.tls.fingerprint}}
                     {% else %}
                         <span class="mono">None</span>
                     {% endif %}
                     </td>
                     <td>
-                    {%if e.http.http_method %}
-                      {{e.http.http_method}}
-                      {% if e.moloch_http_method_url %}  <a href={{e.moloch_http_method_url}} target="_blank"><span class="mono">MLCH</span></a>{% endif %}
-                    {% else %}
-                        <span class="mono">None</span>
-                    {% endif %}
-                    </td>
-                    <td>
-                    {% if e.http.http_refer %}
-                        {{e.http.http_refer}}
+                    {%if e.tls.version %}
+                      {{e.tls.version}}
                     {% else %}
                         <span class="mono">None</span>
                     {% endif %}
@@ -92,6 +86,8 @@
             {% endfor %}
         </table>
     {% else %}
-        <p>No Suricata HTTP</p>
+        <p>No Suricata TLS</p>
     {% endif %}
-</section>
+    </div>
+</div>
+{% endblock %}

@@ -1,13 +1,81 @@
 <section id="suri_tls">
     <h4>Suricata TLS</h4>
-    {% if analysis.suricata.tls %}
+    {% if suricata.tls %}
         <table class="table table-striped table-bordered">
             <tr>
-                <th>TLS</th>
+                <th>TS</th>
+                <th>SRC</th>
+                <th>SPORT</th>
+                <th>DST</th>
+                <th>DPORT</th>
+                <th>SUBJECT</th>
+                <th>ISSUER</th>
+                <th>FINGERPRINT</th>
+                <th>VERSION</th>
             </tr>
-            {% for e in analysis.suricata.tls %}
+            {% for e in suricata.tls %}
             <tr>
-                <td>{{e}}</td>
+                    <td>{{e.timestamp}}</td>
+                    <td>
+                    {%if e.src_ip %}
+                      {{e.src_ip}}
+                      {% if e.moloch_src_ip_url %} <a href={{e.moloch_src_ip_url}} target="_blank"><span class="mono">MLCH</span></a>{% endif %}
+                    {% else %}
+                        <span class="mono">None</span>
+                    {% endif %}
+                    </td>
+                    <td>
+                    {%if e.src_port %}
+                      {{e.src_port}}
+                      {% if e.moloch_src_port_url %} <a href={{e.moloch_src_port_url}} target="_blank"><span class="mono">MLCH</span></a>{% endif %}
+                    {% else %}
+                        <span class="mono">None</span>
+                    {% endif %}
+                    </td>
+                    <td>
+                    {%if e.dest_ip %}
+                      {{e.dest_ip}}
+                      {% if e.moloch_dst_ip_url %} <a href={{e.moloch_dst_ip_url}} target="_blank"><span class="mono">MLCH</span></a>{% endif %}
+                    {% else %}
+                        <span class="mono">None</span>
+                    {% endif %}
+                    </td>
+                    <td>
+                    {%if e.dest_port %}
+                      {{e.dest_port}}
+                      {% if e.moloch_dst_port_url %} <a href={{e.moloch_dst_port_url}} target="_blank"><span class="mono">MLCH</span></a>{% endif %}
+                    {% else %}
+                        <span class="mono">None</span>
+                    {% endif %}
+                    </td>
+                    <td>
+                    {%if e.tls.subject %}
+                      {{e.tls.subject}}
+                    {% else %}
+                        <span class="mono">None</span>
+                    {% endif %}
+                    </td>
+                    <td>
+                    {%if e.tls.issuerdn %}
+                      {{e.tls.issuerdn}}
+                    {% else %}
+                        <span class="mono">None</span>
+                    {% endif %}
+                    </td>
+                    <td>
+                    {%if e.tls.fingerprint %}
+                      {{e.tls.fingerprint}}
+                    {% else %}
+                        <span class="mono">None</span>
+                    {% endif %}
+                    </td>
+                    <td>
+                    {%if e.tls.version %}
+                      {{e.tls.version}}
+                    {% else %}
+                        <span class="mono">None</span>
+                    {% endif %}
+                    </td>
             </tr>
             {% endfor %}
         </table>
